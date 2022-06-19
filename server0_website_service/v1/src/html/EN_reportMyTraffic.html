@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  (!) I think it is important for the user to be able to see the traffic record that the server registers about its activity (!)
+    but I also think that it is preferable that the server not have to delete it as per the user's demand; it could periclitate the server's ability to remember and detect
+    unusual behaviour (and "normal" vs "unusual" requires some reference to be decided)
+
+  .This information should actually be made quite visible to the user (!); preferably, display it on all pages of activity, where an authentication is available
+
+  .Since it seems to be possible for multi-authentication to be possible on the same "account space / owne(r)d space", I think that being able to see all the authenticated devices
+    is imperiously necessary;
+  but, in order to be able to logout another device, what level of authorization would be needed ? I could even have a bot be authenticated, with the authorization
+    to logout other devices, and which keeps a watchout over the ownerd space (!)
+  the server logs the activity, and will make a report on a page / component dedicated to that
+  => I can feel the need for WebSocket, because the server needs to trigger the client about
+
+  .You can definitely "fight" during a session, but how ?
+
+  .The logout: there has to be some hierarchy though; nobody can logout the "ownership credential authentication" (only itself can hit the logout button)
+    own.cred. > auth (bot) > ? > none
+
+  .[authentication: (a credential OR expiration) AND password] -> session ->
+
+  .JWT doesn't allow for traffic control ? well, only if you really do not use a database; I would still use a JWT (!) when emitting the session, to get anti-tampering, but
+    not for the purpose of removing the server-side (!)
+
+  .PROBLEM: how to differentiate between a own.cred. authentication and a lesser one ? I DEFINITELY WANT TO AVOID having the check be an exploitable equality check,
+    some form of "one bit flip away", or even too little of an error-distance [bits] (!); nor would it be fine to have the check be done by a single function [it would
+    also be preferable if the code was being relocated periodicallym]
+
+  .Only some routes require authentication (!), so sessions are going to see a reduced usage
+    the problem is that typically, e-commerce web-sites have routes which can double for non-authorized and for authorized authentications
+    // (!) assuming that a default authentication is "anonymous" (!)
+
+  .Content access (!?): when some content is made public (like "share all"), then there is no need to use the session functionality in the pipeline
+    on the other hand, still record traffic
+    anyway, the point is to somehow change the routing of content that is public, vs the one that still requires authorization checks (such as verifying if the "authentee" is one
+        authorized by the content's owner to access the content
+
+  .Storing app-state in the session (?!); what is this going on about ? store state in the cookie ? and what is meant by "instead, store references" ?
+    e.g. keep a reference to a shopping cart, not the shopping cart itself; and then use "concurrency primitives": transactions, ..? [ACID]
+
+  .JWT no-db would use the client's local/session storage instead, apparently; basically, this is a case when the server is just the software, and not the data; thus, the server just
+    provides the clients the "computational opportunity" to compute the service, the recipe for the service; they are told how to do it, and are probably also served just some static
+    content (such as the available products, but not necessarily something that also changes frequently !)
+
+  .Access tokens (those 5-minute bulk operation API), Refresh tokens (when a sync with the database is needed), (emulated !) Sessions - with time-lag, supposedly; [actual sessions
+    have the requests-handling be centralized on the server-side; this scales through sharding, so it's not a "horizontal scaling"; it's like adding an O(log n) factor to scaling,
+    instead of having it be O(0)]
+    => something about the lag-time between access token and refresh token, when the server actually becomes aware of something ?
+    => the thing with tokens: whether you can expire them forcefully or not, and what is the time-lag to doing so
+    (*): It really takes effort to get used to not having a server-side database
+
+  .There is some discussion about "federation", which seem to use strictly the JWT ?
+    examples of "federated identity platforms" include: OAuth, OpenID Connect,
+    concepts: single sign-on, single-user account,
+    hybrids: "OSS" - keycloak, auth0, supertokens
+    (!) "there is some lag time by the time the access token expires" -> important for "short-live access authorization windows" (!)
+    (?) "a panel that let's you expire a refresh token" (I guess this emulates the "logout" functionality that a session also easily has)
+
+  .
+
+  .
+
+  .
+
+  .
+
+  .
+</body>
+</html>

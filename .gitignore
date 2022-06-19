@@ -1,7 +1,25 @@
-/data
+/shared
 
-/server0/.env
-/server1/.env
+/local0_manage_books/node_modules
 
-/server0/node_modules
-/server1/node_modules
+/local1_crawl_PDB/node_modules
+
+/server0_website_service/node_modules
+/server0_website_service/src/.env
+/server0_website_service/v0
+/server0_website_service/v1
+
+/server1_REST_service/node_modules
+/server1_REST_service/src/.env
+
+/server2_websocket_service/node_modules
+/server2_websocket_service/.env
+
+/server3_crawlerToREST_service/node_modules
+/server3_crawlerToREST_service/
+
+/server4_WebGL/node_modules
+/server4_WebGL/v0
+/server4_WebGL/v1
+
+/server5_react/node_modules

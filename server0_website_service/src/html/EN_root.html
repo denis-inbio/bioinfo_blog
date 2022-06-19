@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script id="mobile-redirection">
+        if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            window.location.replace('/mobile/en');
+        }
+
+        document.head.removeChild(document.getElementById("mobile-redirection"));
+    </script>
+</head>
+<body>
+
+{ route: "/en", functions: [ pipeline.SERVERLOG_MonitorClientIP, pipeline.SERVERSIDE_MonitorURLTraffic, pipeline.GET_RootEN ]},  // the navigation hub for English { route: actually, it should be USA/UK, by country, because internationalization is not just language, but instead it is nationality and culture, and even in the same nationality there can be multiple "cultural identities" which internationalization has to match]
+{ route: "/en/register", functions: [ pipeline.SERVERLOG_MonitorClientIP, pipeline.SERVERSIDE_MonitorURLTraffic, pipeline.GET_RootEN ]}, // the server emits the ownership credential, "birth / being born"; define the "pseudo-identity"
+{ route: "/en/authenticate", functions: [ pipeline.SERVERLOG_MonitorClientIP, pipeline.SERVERSIDE_MonitorURLTraffic, pipeline.GET_RootEN ]}, //
+{ route: "/en/exposable-credential", functions: [ pipeline.SERVERLOG_MonitorClientIP, pipeline.SERVERSIDE_MonitorURLTraffic, pipeline.GET_RootEN ]},    // choose the access rights for / configure the "indirect, exposable, cancelable, leakable credential" <re-term> (!)
+{ route: "/en/session", functions: [ pipeline.SERVERLOG_MonitorClientIP, pipeline.SERVERSIDE_MonitorURLTraffic, pipeline.GET_RootEN ]},  // choose the details for the session to-be
+{ route: "/en/private-space", functions: [ pipeline.SERVERLOG_MonitorClientIP, pipeline.SERVERSIDE_MonitorURLTraffic, pipeline.GET_RootEN ]},  // see: expirables, current session(s) { route: if multiple devices ]}, traffic, connected devices, device history, control multi-user/multi-device "authorization of authentication", functions: [ CRUD expirables, CRUD "tokens" (signed, decentralized, emitted accesses), ...
+
+    <div style="display: flex; flex-direction: column; align-items: center;">
+    Latest: public CSM viewer, categories of posts<br/>
+    Navigation: URL design showcase (+) "you are here"<br/>
+    APIs presentation: for crawlers / automatons -> has an API-like back-compatibility design consideration (JSON) +~ URL design again<br/>
+    Social: keep in touch with the members (members lounge ?)<br/>
+    Finance: we are a Non-Profit Organization (NPO / ONG), so here are our finances (public); donation mechanisms<br/>
+    Auth-zone entry: register, login, access control, CSM editor<br/>
+    Content: public CSM viewer, categories of posts, filtering, searching<br/>
+    </div>
+
+    <div id="welcome-hub" style="display: flex; flex-direction: column;align-items: flex-start;">
+        <div id="nav" style="display: flex; flex-direction: row; align-items: center;">
+            <a href="/en/register"><button id="register-btn">Register</button></a>
+            <a href="/en/authenticate"><button id="login-btn">Login</button></a>
+            <a href="/en/exposable-credential"><button id="exposable-credential-btn">Exposable Credential</button></a>
+
+            <a href="/en/session"><button id="session-btn">Session</button></a>
+            <a href="/en/private-space"><button id="private-space-btn">Private Space</button></a>
+
+            <a href="/en/recover"><button id="recovery-btn">Recover</button></a>
+            <a href="/en/financial"><button>Financial</button></a>
+            <a href="/en/content"><button>Content</button></a>
+            <a href="/en/latest"><button>Latest</button></a>
+            <a href="/en/genome"><button>Genome</button></a>
+            <a href="/en/social"><button>Social</button></a>
+        </div>
+
+        <div>
+
+        </div>
+    </div>
+
+</body>
+</html>

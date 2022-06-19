@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+/// ---------
+
+<div id="search-bar" style="display: flex; flex-direction: row;">
+    <input id="search-field" type="text" style="overflow-x: scroll; width: 10vw; height: 30px; font-size: 25px;">
+    <button id="search-button">Search</button>
+</div>
+
+<script>
+    const search_field_element = document.getElementById("search-field");
+    const search_button_element = document.getElementById("search-button");
+    search_button_element.onclick = (event) => {
+        const query = search_field_element.value;
+        console.log(`Querying: ${query}`);
+
+        fetch("/")
+    };
+
+</script>
+
+/// ---------
+
+</body>
+</html>

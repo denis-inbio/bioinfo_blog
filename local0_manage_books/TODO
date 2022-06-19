@@ -1,0 +1,3 @@
+.pdf will NOT be the storage format because it takes too much space
+.djvu is the format that will be used instead
+the server will provide a service for converting .djvu into .pdf, on-demand, or to directly download a quert result into .pdf

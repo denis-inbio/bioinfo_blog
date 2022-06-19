@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body style="display: flex; flex-direction: row;">
+
+    <textarea id="editor-area" style="width: 45vw; height: 90vh;"></textarea>
+
+    <div id="preview-area" style="width:50vw; height: 95vh; overflow: scroll;"></div>
+
+    <script>
+        // a blog-post can have some limited amount of HTML-CSS functionality; this includes:
+            // text
+            // images
+
+        const PREVIEW_UpdateTextUi = () => {
+            console.log("PREVIEW_UpdateTextUi");
+            const text_area_element = document.getElementById("editor-area");
+            const preview_area_element = document.getElementById("preview-area");
+
+            if (text_area_element) { if (preview_area_element) {
+                preview_area_element.innerText = text_area_element.value;
+            }}
+        };
+
+        const PREVIEW_UpdateStyle = () => {
+
+        };
+
+        const text_area_element = document.getElementById("editor-area");
+        if (text_area_element) {
+            text_area_element.addEventListener("input", (event) => {
+                console.log("oninput");
+                PREVIEW_UpdateTextUi();
+            });
+        }
+
+    </script>
+</body>
+</html>

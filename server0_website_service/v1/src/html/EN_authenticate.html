@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script id="mobile-redirection">
+        if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            window.location.replace('/mobile/en/authenticate');
+        }
+
+        document.head.removeChild(document.getElementById("mobile-redirection"));
+    </script>
+
+</head>
+<body style="display: flex; flex-direction: column; align-items: center;">
+
+    <header id="header">
+        Logo, bla
+    </header>
+
+    <section id="authentication" style="width: 70vw; display: flex; flex-direction: column;">
+        <div id="authentication-header" style="margin-left: auto; margin-right:auto;">
+            <p id="authentication-header-message">Select the method would you like to authenticate by</p>
+        </div>
+        <div id="authentication-body" style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
+            <div id="authentication-body-ownership-credential-method" style="display: flex; flex-direction: column; align-items: center;">
+                <div id="authentication-body-ownership-credential-method-drop-area" style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="data:image/jpeg;base64,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">
+                    <label>Drop the ownership credential file here</label>
+                </div>
+                <button>Submit - ownership credential</button>
+            </div>
+            <div id="authentication-body-exposable-credential-method" style="display: flex; flex-direction: column; align-items: center;">
+                <div id="authentication-body-exposable-credential-method-drop-area" style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="data:image/jpeg;base64,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">
+                    <label>Drop the ownership credential file here</label>
+                </div>
+                <button>Submit - exposable credential</button>
+            </div>
+        </div>
+    </section>
+
+    <script id="credential-submission">
+        let DECODE_BinaryFile = (binary_file) => {
+            console.log(binary_file);
+        };
+
+        let DECODE_TextFile = (text_file) => {
+            console.log(text_file);
+        };
+
+        let POST_OwnershipCredential = (decoded_string) => {
+            console.log(decoded_string);
+
+            // binary file -> UInt8Array -> {string-number array ->} string decode -> JSON
+
+        };
+
+        let POST_ExposableCredential = (file) => {
+            console.log(file);
+
+        };
+
+        let BEHAVIOUR_NoFileInDataTransfer = () => { console.log("No file in dataTransfer"); };
+        let BEHAVIOUR_FileInDataTransferIsTooLarge = () => { console.log("File in dataTransfer is too large"); };
+        let BEHAVIOUR_MultipleFilesInDataTransfer = () => { console.log("Multiple files in dataTransfer"); };
+
+        let INITIALIZE_FileDropBehaviour = () => {
+            console.log("Initializing drag-drop behaviour");
+
+            const file_maximum_size = 1024;
+
+            document.body.ondrop = (event) => { event.preventDefault();  };
+
+            if ( document.getElementById("authentication-body-ownership-credential-method-drop-area") ) {
+                document.getElementById("authentication-body-ownership-credential-method-drop-area").ondragover = (event) => {
+                    event.preventDefault();
+                };
+                document.getElementById("authentication-body-ownership-credential-method-drop-area").ondrop = (event) => {
+                    event.preventDefault();
+                    console.log(event.dataTransfer);
+                };
+            }
+
+            if ( document.getElementById("authentication-body-exposable-credential-method-drop-area") ) {
+                document.getElementById("authentication-body-exposable-credential-method-drop-area").ondragover = (event) => {
+                    event.preventDefault();
+                };
+                document.getElementById("authentication-body-exposable-credential-method-drop-area").ondrop = async (event) => {
+                    event.preventDefault();
+
+                    console.log(event.dataTransfer);
+
+                    if (event.dataTransfer.files.length === 0) {
+                        BEHAVIOUR_NoFileInDataTransfer();
+                    }
+                    else if (event.dataTransfer.files.length === 1) {
+                        if ( event.dataTransfer.files[0].size > file_maximum_size) {
+                            BEHAVIOUR_FileInDataTransferIsTooLarge();
+                        }
+                        else {
+                            const credential = new Uint8Array( await event.dataTransfer.files[0].arrayBuffer() );
+                            console.log("Uint8: ", credential);
+
+                            const response = await fetch("/api/authenticate", {
+                                method:"POST",
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/octet-stream"
+                                },
+                                body: credential
+                            })
+                        }
+                    }
+                    else if (event.dataTransfer.files.length > 1) {
+                        BEHAVIOUR_MultipleFilesInDataTransfer();
+                    }
+                };
+            }
+
+
+            // section_authenticate_by_credential.ondrop = async (event) => {
+            //     event.preventDefault();
+            //     // console.log("Binary file: ", event.dataTransfer.files, ", files size: ", event.dataTransfer.files[0].size);
+            //     if (event.dataTransfer.files[0].size === 1024) {
+            //         state["binary"] = new Uint8Array(await event.dataTransfer.files[0].arrayBuffer());
+            //
+            //         console.log(state["binary"]);
+            //         console.log("State: ", state);
+            //
+            //         // <TODO> fetch POST
+            //         // the server will respond with a session cookie; that should expire when the tab closes, or whatever does it mean for a session to finish
+            //         // or when "the connection expires"
+            //
+            //         console.log("POST request");
+            //
+            //         fetch("/en/authenticate", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json",
+            //             },
+            //             body: JSON.stringify( {credential_secret: state["binary"]} )
+            //         }); // <TODO> redirect to /en/authenticated; analogously for /ro/autentificat
+            //             // <TODO> analogously for registering, one can be redirected to the /*/authenticated URL
+            //     }
+            //};
+
+            // const section_authenticate_by_expirable = document.getElementById("authenticate-by-expirable");
+            //
+            // section_authenticate_by_expirable.ondragover = (event) => { event.preventDefault();  };
+            // section_authenticate_by_expirable.ondrop = async (event) => {
+            //     event.preventDefault();
+            //     // console.log("Text file: ", event.dataTransfer.files, ", files size: ", event.dataTransfer.files[0].size);
+            //     const text = await event.dataTransfer.files[0].text();
+            //     const uint8 = CONVERT_TextIntoUInt8Array(text);
+            //     state["text"] = new Uint8Array(uint8);
+            //
+            //     console.log(state["text"]);
+            //     console.log("State: ", state);
+            //
+            //     CHECK_BinaryAndTextAreMatching();
+            // };
+        }
+        INITIALIZE_FileDropBehaviour();
+
+    </script>
+
+    <section id="need-help">
+        On-demand, GET animations / images (screenshots) of the procedure (expected of the user) for this page
+        Variants:
+            desktop
+            mobile
+    </section>
+
+    <footer id="footer">
+
+    </footer>
+
+    Login can be done through:
+        credential, exposable credential + password,
+
+        -> (!) /en/choose-session-type (!) [128, 256, 512, 1024, 2048, ...] [bits !] <TODO> or use UUID4
+        JWT: header (?) [supposedly format meta-data], payload (*), cryptographic signature (?!) => the signature is what really is important here
+        using the JWT just makes it so that the server can just emit a json with some data in it, set an expiration date attribute, make authorization attributes, then sign it and
+            send it to a client, the idea here being that if the server can trust the signature, then it can trust the content, and it doesn't have to keep its own copy / to centralize
+            what the authorization attributes for each session / expirable are
+
+    <section id="authenticate-by-credential" style="display: flex; flex-direction: column;">
+        <div style="width: fit-content">
+            <input id="credential-secret" type="text" placeholder="email">
+        </div>
+        <div id="login-file" style="width: fit-content">
+            <input id="login-string" type="password" placeholder="Drag the login file here or copy-paste its content here">
+        </div>
+        <div id="drop-area" style="width: fit-content">
+            <input id="credential-secret-text" type="password" placeholder="Drag the login file here or copy-paste its content here">
+            <input id="credential-secret-file" type="file" placeholder="Drag the login file here or copy-paste its content here">
+        </div>
+    </section>
+
+    <section id="authenticate-by-expirable">
+        <div id="drop-area-container" style="display: flex; flex-direction: row; justify-content: space-between; width: 20vw;">
+            <label id="binary" style="background: cadetblue; font-size: 20px; border-radius: 5px; width: 30%; height: 35px; display: flex; align-items: center; justify-content: center;">
+                <p>Binary</p>
+                <input id="binary-drop" type="file" accept="application/octet-stream" style="display: none;">
+            </label>
+            <label id="text" style="background: saddlebrown; font-size: 20px; border-radius: 5px; width: 30%; height: 35px; display: flex; align-items: center; justify-content: center;">
+                <p>Text</p>
+                <input id="text-drop" type="file" accept="text/*" style="display: none;">
+            </label>
+        </div>
+    </section>
+
+    <script>
+        const state = {};
+
+
+
+    const CONVERT_TextIntoUInt8Array = (space_separated_values) => {
+        let uint8 = new Uint8Array(1024);
+        let index_uint8 = 0;
+        let current_uint8 = 0;
+
+        for(let index_text = 0; index_text < space_separated_values.length && index_uint8 < 1024; index_text++) {
+            // console.log(space_separated_values[index_text] - '0');
+            // console.log("Before: ", current_uint8);
+
+            if (space_separated_values[index_text] === ' ') {
+                // console.log("Space");
+                uint8[index_uint8] = current_uint8;
+                current_uint8 = 0;
+                index_uint8 += 1;
+            }
+            else if (index_text === space_separated_values.length - 1) {
+                // console.log("End", current_uint8);
+                uint8[index_uint8] = current_uint8;
+                current_uint8 = 0;
+                index_uint8 += 1;
+            }
+            else {
+                current_uint8 *= 10;
+                current_uint8 += space_separated_values[index_text] - '0';
+            }
+            // console.log("After: ", current_uint8);
+        }
+
+        // console.log("Last: ", uint8[1023]);
+        return uint8;
+    }
+
+    const CHECK_BinaryAndTextAreMatching = () => {
+        if (state["binary"].length === state["text"].length) {
+            for (let index = 0; index < state["binary"].length; index++) {
+                if (state["binary"][index] !== state["text"][index]) {
+                    console.log("Mismatch in the content");
+                    break;
+                }
+            }
+            console.log("Matching");
+        }
+        else {
+            console.log("Not matching in length");
+        }
+    };
+
+    </script>
+
+</body>
+</html>

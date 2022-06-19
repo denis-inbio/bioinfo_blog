@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websocket</title>
+</head>
+<body>
+
+<script defer>
+  const websocket = new WebSocket("ws://localhost:2122");
+
+  websocket.addEventListener("open", (event) => {
+    console.log("Connected to WebSocket server on port 2122");
+  });
+
+  websocket.addEventListener("message", (event) => {
+    console.log("Received a message from the WebSocket server ws://localhost:2122", event);
+  });
+
+  const sendMessage = () => {
+    console.log("Sending message...")
+    const input_text_element = document.getElementById("input-text");
+
+    websocket.send(input_text_element.value);
+  };
+
+</script>
+
+<input id="input-text" type="text">
+<button id="btn-send" onClick="sendMessage();">Send message</button>
+
+</body>
+</html>

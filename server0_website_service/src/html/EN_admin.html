@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div id="manage-users" style="display: flex; flex-direction: column;">
+        <div id="search-bar" style="display: flex; flex-direction: row;">
+            <input id="search-field" type="text" style="overflow-x: scroll; width: 15vw; height: 30px; font-size: 25px;" placeholder="Search for a user">
+            <button id="search-button">Search</button>
+        </div>
+
+        <div id="user-results" style="display: flex; flex-direction: column;">
+
+        </div>
+    </div>
+
+    <script>
+        const POPULATE_UserResults = (array_of_json, results_container_id) => {
+            const user_results_element = document.getElementById(results_container_id);
+
+            if (user_results_element) {
+                while (user_results_element.firstChild) {
+                    user_results_element.removeChild(user_results_element.firstChild);
+                }
+
+                array_of_json.forEach((json, index) => {
+                    const container_node = document.createElement("div");
+                    container_node.id = index.toString();
+                    container_node.style.display = "flex";
+                    container_node.style.flexDirection = "row";
+
+                    const pseudonym_node = document.createElement("p");
+                    pseudonym_node.innerText = json.pseudonym;
+
+                    const email_node = document.createElement("p");
+                    email_node.style.marginLeft = "6px";
+                    email_node.innerText = json.email;
+
+                    const password_node = document.createElement("p");
+                    password_node.style.marginLeft = "6px";
+                    password_node.innerText = json.password_keccak512;
+
+                    const delete_button_node = document.createElement("button");
+                    delete_button_node.style.marginLeft = "6px";
+                    delete_button_node.innerText = "Delete";
+                    delete_button_node.onclick = (event) => {
+                        console.log(`Delete ${index}`);
+                        const node = document.getElementById(index.toString());
+                        document.getElementById(results_container_id).removeChild(node);
+
+                        fetch("/api/users", {
+                            method: "DELETE",
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify( {id: json._id} )
+                        })
+                    };
+
+                    const edit_button_node = document.createElement("button");
+                    edit_button_node.style.marginLeft = "6px";
+                    edit_button_node.innerText = "Edit";
+                    edit_button_node.onclick = (event) => {
+                        console.log(`Edit ${index}`);
+
+                        // convert the divs into input type text or make the divs editable
+                        // hide/display:none the buttons and add a Submit and a Revert button
+                        // send a fetch request, await confirmation for editing
+                    };
+
+                    const reset_password_button_node = document.createElement("button");
+                    reset_password_button_node.style.marginLeft = "6px";
+                    reset_password_button_node.innerText = "Reset";
+                    reset_password_button_node.onclick = (event) => {
+                        console.log(`Reset ${index}`);
+                    };
+
+                    const blacklist_button_node = document.createElement("button");
+                    blacklist_button_node.style.marginLeft = "6px";
+                    blacklist_button_node.innerText = "Blacklist";
+                    blacklist_button_node.onclick = (event) => {
+                        console.log(`Reset ${index}`);
+                    };
+
+                    container_node.appendChild(pseudonym_node);
+                    container_node.appendChild(email_node);
+                    container_node.appendChild(password_node);
+                    container_node.appendChild(delete_button_node);
+                    container_node.appendChild(edit_button_node);
+                    container_node.appendChild(reset_password_button_node);
+                    container_node.appendChild(blacklist_button_node);
+
+                    user_results_element.appendChild(container_node);
+                });
+            }
+            else {
+                console.log("The element id links to no element");
+            }
+        };
+
+        const INITIALIZE_GET_Users_SearchButtonOnclick = (button_id, results_container_id) => {
+            const search_button_element = document.getElementById(button_id);
+
+            if (search_button_element) {
+                search_button_element.onclick = (event) => {
+                    fetch("/api/users", {
+                        method: "GET",
+                        headers: {
+                            "Accept": "application/json",
+                        }
+                    })
+                        .then(
+                            (success) => {
+                                console.log(success);
+                                success.json()
+                                    .then(
+                                        (success) => {
+                                            POPULATE_UserResults(success, results_container_id)
+                                        },
+                                        (reject) => {
+                                            console.log("HttpResponse.json() was rejected", reject);
+                                        }
+                                    )
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
+                            },
+                            (reject) => {
+                                console.log("Fetch-promise was rejected", reject);
+                            }
+                        )
+                        .catch((error) => {
+                            console.log(error);
+                        })
+                };
+            }
+            else {
+                console.log("The element id links to no element");
+            }
+        };
+        INITIALIZE_GET_Users_SearchButtonOnclick("search-button", "user-results");
+
+    </script>
+
+</body>
+</html>

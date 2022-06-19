@@ -1,0 +1,17 @@
+{
+  "/": ["GET"],
+
+  "/en/": ["GET"],
+  "/en/register": ["GET", "POST", "OPTIONS"],
+  "/en/login": ["GET", "POST", "OPTIONS"],
+  "/en/recover": ["GET", "POST", "OPTIONS"],
+
+  "/ro/": ["GET"],
+  "/ro/înregistrează": ["GET", "POST", "OPTIONS"],
+  "/ro/loghează": ["GET", "POST", "OPTIONS"],
+  "/ro/recuperează": ["GET", "POST", "OPTIONS"],
+
+  "/api":  ["GET"],
+  "/api/:functionality": ["GET"]
+
+}

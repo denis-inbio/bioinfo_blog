@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    Here, one can define the parameters for the expirable to be used in authentication-authorization
+    <section id="configure-expirable" style="display: flex; flex-direction: column; width: 30vw;">
+
+        <div id="expirable-properties" style="display: flex; flex-direction: column; position: relative; left: 50px;">
+            <label>Name:<input type="text" placeholder="name the expirable"></label>
+            <label>How large should the entropy be ? [min: 256, max: 1024]<input id="entropy-size" type="number"></label>
+            <label>How many times can the expirable be used ?<input id="remainig" type="number"></label>
+            <label>When should the expirable be removed ?<input id="removal-date" type="datetime-local"></label>
+        </div>
+
+        <div id="appearance-access" style="display: flex; flex-direction: row;">
+            <button>Check all</button>
+            <div style="display: flex; flex-direction: column;">
+                <label>Has access to editing the pseudonym<input id="can-edit-pseudonym" type="checkbox"></label>
+                <label>Has access to editing the email<input id="can-edit-email" type="checkbox"></label>
+            </div>
+        </div>
+
+        <div id="credential-access" style="display: flex; flex-direction: row;">
+            <button>Check all</button>
+            <div style="display: flex; flex-direction: column;">
+                <label>Has access to editing the password<input id="can-edit-password" type="checkbox"></label>
+                <label>Has access to reseting the credential secret<input id="can-reset-credential-secret" type="checkbox"></label>
+            </div>
+        </div>
+
+        <div id="posts-access" style="display: flex; flex-direction: row;">
+            <button>Check all</button>
+            <div style="display: flex; flex-direction: column;">
+                <label>Has access to reading own posts<input id="can-read-own-posts" type="checkbox"></label>
+                <label>Has access to creating own posts<input id="can-create-own-posts" type="checkbox"></label>
+                <label>Has access to editing own posts<input id="can-edit-own-posts" type="checkbox"></label>
+                <label>Has access to deleting own posts<input id="can-delete-own-posts" type="checkbox"></label>
+            </div>
+        </div>
+        <button id="generate-expirable">Submit</button>
+
+    </section>
+
+    <script>
+        const INITIALIZE_ClickBehaviourCheckAll = () => {
+
+        };
+
+        const INITIALIZE_ConstructDatetimePicker = () => {
+
+        };
+
+        const BEHAVIOUR_UpdateTheMinimumDatetime = (input_id) => {
+            const datetime = new Date();
+            const input_element = document.getElementById(input_id);
+           input_element.min = datetime.toLocaleString();
+            console.log(datetime.toLocaleString());
+            console.log(input_element.min);
+            setTimeout( () => {
+                const input_element = document.getElementById(input_id);
+                const datetime = new Date();
+                input_element.min = datetime.toLocaleString();
+                console.log(datetime.toLocaleString());
+            }, 60000);
+        };
+
+        BEHAVIOUR_UpdateTheMinimumDatetime("removal-date");
+    </script>
+
+
+</body>
+</html>
