@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script id="mobile-redirection">
+        if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            window.location.replace('/mobile/en/register');
+        }
+
+        document.head.removeChild(document.getElementById("mobile-redirection"));
+    </script>
+
+</head>
+<body>
+
+    <header id="header" style="width: 100%; background: lightgrey; display: flex; flex-direction: row; align-items: center; justify-content: space-between">
+        <a href="https://www.rsbi.ro/" id="institution-brand" style="margin-left: 2vw; text-decoration: none; color: inherit;display: flex; flex-direction: row; align-items: center;" >
+            <img alt="societatea română de bioinformatică" style="width:25%; height: 25%;" src="data:image/png;base64,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">
+            <h2 style="font-family: 'DejaVu Sans Mono',sans-serif; font-size: 25px;">Societatea Română de Bioinformatică</h2>
+        </a>
+
+        <div id="appartenance" style="margin-right: 2vw;" >
+            <a href="https://elixir-europe.org/" style="display: flex; flex-direction: row; align-items: center;">
+                <img id="eu-flag" alt="europe" style="width:40%; height: 40%;" src="data:image/png;base64,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">
+                <img id="ELIXIR-flag" alt="ELIXIR distributed infrastructure" style="width:40%; height: 40%;" src="data:image/png;base64,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">
+            </a>
+        </div>
+    </header>
+
+    <div style="display: flex; flex-direction: row;">
+        <nav id="back-navigation" style="display: flex; flex-direction: column; justify-content: space-around; align-items: flex-end;">
+            <a href="/en">Root</a>
+        </nav>
+
+        <section id="registration" style="width: 70vw; margin-left: auto; margin-right: auto; margin-top: 20px; display: flex; flex-direction: column;">
+
+            <div style="display: flex; flex-direction: row;">
+                <input id="registration-pseudonym" type="text" placeholder="[Optional] pseudonym">
+                <p id="registration-pseudonym-message" style="margin-left: 20px;">Pseudonym is not available</p>
+            </div>
+
+            <div style="display: flex; flex-direction: row;">
+                <input id="registration-email" type="text" placeholder="[Optional] email">
+                <input id="registration-email-confirm" style="margin-left:20px;" type="text" placeholder="Confirm email">
+                <p id="registration-email-message" style="margin-left: 20px;">Email is not available</p>
+            </div>
+
+            <div style="display: flex; flex-direction: row;">
+                <input id="registration-password" type="password" placeholder="[Optional] password">
+                <input id="registration-password-confirm" style="margin-left: 20px;" type="password" placeholder="Confirm password">
+                <p id="registration-password-message" style="margin-left: 20px;">Password is too weak / too long / doesn't contain all required special characters</p>
+            </div>
+
+            <button id="registration-submit" style="margin-top: 20px;">Register</button>
+        </section>
+
+        <nav id="forward-navigation" style="display: flex; flex-direction: column; justify-content: space-around; align-items: flex-start;">
+            <a href="/en/exposable-credential">Exposable credential</a>
+            <a href="/en/session">Session</a>
+            <a href="/en/authenticate">Authenticate</a>
+        </nav>
+    </div>
+
+    <footer id="footer">
+
+    </footer>
+
+    <script id="register-form-behaviour">
+
+        let CONFIRM_CredentialHasBeenDownloaded = async (event) => {
+            const object_id = event.target.dataset["id"];
+
+            if (object_id) {
+                try {
+                    const server_response = await fetch("/api/register-confirm", {
+                        method: "POST",
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ id: object_id })
+                    });
+
+                    console.log(server_response);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        };
+
+        let INFORMATION_RegisterData = () => {
+            const body = {};
+
+            if ( document.getElementById("registration-pseudonym") ) {
+                body.pseudonym = document.getElementById("registration-pseudonym").value;
+            }
+
+            if ( document.getElementById("registration-email") ) {
+                body.email = document.getElementById("registration-email").value;
+            }
+
+            if ( document.getElementById("registration-password") ) {
+                body.password = document.getElementById("registration-password").value;
+            }
+
+            return body;
+        };
+
+        let DECONSTRUCT_DownloadAnchorButton = () => {
+            console.log("Deconstructing");
+
+            const download_button_element = document.getElementById("registration-download-button");    // (!) the order is inverted here, to avoid having "hanging HTML nodes" -> memory leak
+            download_button_element.innerHTML = "";
+            download_button_element.onclick = null;
+            delete download_button_element.dataset["id"];   // <TODO> ensure it's correct
+            download_button_element.parentNode.removeChild(download_button_element);
+
+            const download_anchor_element = document.getElementById("registration-download-anchor");
+            download_anchor_element.href = "";
+            download_anchor_element.download = "";
+            download_anchor_element.style.pointerEvents = "none";
+            download_anchor_element.parentNode.removeChild(download_anchor_element);
+        };
+
+        let CONSTRUCT_DownloadAnchorButton = (parent_id, object_id, url) => {
+            console.log("Constructing, for url ", url);
+
+            if (document.getElementById(parent_id)) {
+                const download_anchor_element = document.createElement("a");
+                const download_button_element = document.createElement("button");
+
+                download_anchor_element.id = "registration-download-anchor";
+                download_anchor_element.href = url;
+                download_anchor_element.download = "credential";
+                download_anchor_element.style.marginTop = "20px";
+                download_anchor_element.style.marginLeft = "auto";
+                download_anchor_element.style.marginRight = "auto";
+
+                download_button_element.id = "registration-download-button";
+                download_button_element.innerText = "Download credential [1 minute]";
+                download_button_element.style.fontSize = "xx-large";
+                download_button_element.dataset["id"] = object_id;
+                download_button_element.onclick = CONFIRM_CredentialHasBeenDownloaded;  // <TODO> will the button overload the <a> anchor's behaviour of downloading the file ?
+
+                setTimeout(DECONSTRUCT_DownloadAnchorButton, 60000);
+
+                download_anchor_element.appendChild(download_button_element);
+                document.getElementById(parent_id).appendChild(download_anchor_element);
+            }
+        };
+
+        let POST_RegisterAPI = async () => {
+
+            try {
+                const server_response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(INFORMATION_RegisterData())
+                });
+                console.log(server_response);
+
+                const response_json = await server_response.json();
+                console.log(response_json);
+
+                const url = URL.createObjectURL(new Blob([new Uint8Array(response_json.credential.data)]));
+
+                CONSTRUCT_DownloadAnchorButton("registration", response_json.id, url);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        };
+
+        let BEHAVIOUR_RegisterButton = () => {
+            document.getElementById("registration-submit").onclick = POST_RegisterAPI;
+        };
+
+        BEHAVIOUR_RegisterButton();
+    </script>
+
+</body>
+</html>

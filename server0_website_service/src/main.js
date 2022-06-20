@@ -1,33 +1,37 @@
+// <TODO> <PARTIALLY DONE> next revision: Root -> [en] entry, [ro] intrare, [dk] indgang
+// <TODO> <DONE PARTIALLY> <Need to check (req.protocol) for WebSocket> url traffic needs to include the protocol for the url [Http, Https, Websocket]
+// <TODO> need to also add the domain name to .env, to avoid using "localhost" in the redirect (ProtocolRedirect)
+// <TODO> need a page generator, from templates
+
+// <TODO> decide on a default ownership credential
+// <TODO> decide on a default exposable credential
+// <TODO> using a password is the same as enabling 2FA (or multi-factor) authentication; the same goes for other private information or entropy
+
+// <TODO> have a mechanism for exchanging entropy between client and server, at different moments of the communication (this can
+    //  contribute to periodically changing some private-secure cookie)
+
+// <TODO> need to talk to parabellum, maybe he has some ideas related to bioinformatic / molecular dynamics / chemistry
+
 // ---- ---- ----
+
+// ---- State is needed for the pipeline to work;
+    // why ?
+    // because all the functions in the pipeline take no parameters;
+    // instead, they bind this $state object here to pass state
 
 const state = {};
 
 module.exports = { state };
 
-// ---- ---- ----
+// ---- APIs [HTTP, HTTPS, WebSocket]
 
-const path = require("path");
-const mongoose = require("mongoose");
-const express = require("express");
-const reqQueue = require("express-queue");
-
-// ----
-
-const config = require("./js/config");
-const REST_API = require("./js/rest-api");
-
-// ----
-
-const { BlogPost } = require("./model/blog-post");
-const { ExposableCredential } = require("./model/exposable-credential");
-const { IPTraffic } = require("./model/ip-traffic");
-const { Session } = require("./model/session");
-const { UrlTraffic, VALIDATE_REPAIR_UrlTraffic } = require("./model/url-traffic");
-const { User } = require("./model/user");
-
-const pipeline = require("./js/pipeline-function");
+const HttpApi = require("./js/http-api");
+const HttpSslApi = require("./js/http-ssl-api");
+const WebSocketApi = require("./js/websocket-api");
 
 // ---- ---- ----
+
+// ---- Utility (don't have repair functions)
 
 const UTILITY_StemsStringToStemsArray = (stems_string) => {
     let array = [];
@@ -64,10 +68,10 @@ const UTILITY_StemsArrayToPath = (stems_array) => {
         out_path = stems_array[0];
     }
     else if(stems_array.length >= 2) {
-        out_path = path.join(stems_array[0], stems_array[1]);
+        out_path = require("path").join(stems_array[0], stems_array[1]);
         // console.log("Before: ", out_path);
         for(let index = 2; index < stems_array.length; index++) {
-            out_path = path.join(out_path, stems_array[index]);
+            out_path = require("path").join(out_path, stems_array[index]);
             // console.log("During: ", out_path);
         }
         // console.log("After: ", out_path);
@@ -76,194 +80,99 @@ const UTILITY_StemsArrayToPath = (stems_array) => {
     return out_path;
 };
 
-const ROUTES_UnionOfAllRoutes = () => {
-    const routes = [];
-
-    for (let index = 0; index < REST_API.GET.length; index++) {
-        routes.push(REST_API.GET[index].route);
-    }
-
-    return routes;
-};
-
-const DATABASE_InitializeCollections = () => {
-    DATABASE_InitializeURLTrafficCollection();
-
-    state["DATABASE_InitializeCollections"] = "failure";
-    state["DATABASE_InitializeCollections"] = "success";
-};
-
-const DATABASE_RepairInitializeCollections = () => {
-
-    state["DATABASE_InitializeCollections"] = "irreparable";
-    state["DATABASE_InitializeCollections"] = "repaired";
-};
-
-const DATABASE_InitializeURLTrafficCollection = async () => {   // <TODO> only the GET routes ? there can be routes without GET, but with POST, so I actually need a union of all of the routes
-    const routes = ROUTES_UnionOfAllRoutes();
-    console.log("Routes: ", routes);
-
-    for (let index = 0; index < routes.length; index++) {
-        const result = await UrlTraffic.find({
-            url: routes[index]
-        });
-
-        if (result.length === 0) {
-            const urlTraffic = new UrlTraffic({
-                url: routes[index],
-                GET: 0,
-                POST: 0,
-                PUT: 0,
-                DELETE: 0,
-                OPTIONS: 0
-            });
-
-            urlTraffic.save()
-                .then(
-                    (fulfilled) => {
-                        // console.log(fulfilled);
-                    },
-                    (rejected) => {
-                        // console.log(rejected);
-                    }
-                )
-                .catch( (error) => {
-                    console.log(error);
-                });
-        }
-        else if (result.length === 0) {
-            await VALIDATE_REPAIR_UrlTraffic(result[0]).save();
-        }
-        else {
-
-        }
-    }
-};
-
-// ---- ---- ----
-
-const ENVIRONMENT_Directories = (state) => {
-    require("dotenv").config({
-        path: ".env"
-    });
-    require("dotenv").config({
-        path: "src/.env"
-    });
-
-    if( process.env["ABSOLUTE_PATH__STEMS_ARRAY__PROJECT_DIRECTORY"] &&
-        process.env["RELATIVE_PATH__SERVER_DIRECTORY"] &&
-        process.env["RELATIVE_PATH__FILES_DIRECTORY"] &&
-        process.env["RELATIVE_PATH__FAVICON_FILE"]
-    ) {
-        state["absolutePath_projectDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["ABSOLUTE_PATH__STEMS_ARRAY__PROJECT_DIRECTORY"]));
-        state["relativePath_filesDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__FILES_DIRECTORY"]));
-        state["relativePath_faviconFile"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__FAVICON_FILE"]));
-        state["relativePath_serverDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__SERVER_DIRECTORY"]));
-        state["relativePath_server_HTMLDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__SERVER__HTML_DIRECTORY"]));
-
-        state["absolutePath_HTMLDirectory"] = path.join(
-            state["absolutePath_projectDirectory"],
-            state["relativePath_serverDirectory"],
-            state["relativePath_server_HTMLDirectory"]);
-
-        state["ENVIRONMENT_Directories"] = "success";
-    }
-    else {
-        state["ENVIRONMENT_Directories"] = "failure";
-    }
-
-    // console.log("State ENVIRONMENT_ProjectDirectory: ", state);
-};
-
-const ENVIRONMENT_RepairDirectories = (state) => {
-    require("dotenv").config({
-        path: ".env"
-    });
-    require("dotenv").config({
-        path: "src/.env"
-    });
-
-    if (true) {
-
-        state["ENVIRONMENT_Directories"] = "repaired";
-    }
-    else {
-        state["ENVIRONMENT_Directories"] = "irreparable";
-    }
-    // console.log("State ENVIRONMENT_RepairDirectories: ", state);
-};
-// ---- ---- ----
-
-const ENVIRONMENT_Mongoose = (state) => {
-    require("dotenv").config({
-        path: "src/.env"
-    });
-
-    if (process.env["MONGODB_URI_PREFIX_MONGODB"] && process.env["MONGODB_URI_SUFFIX_MONGODB"]) {
-        state["MONGODB_URI"] = process.env["MONGODB_URI_PREFIX_MONGODB"] + "/" + process.env["MONGODB_URI_SUFFIX_MONGODB"];
-        state["ENVIRONMENT_Mongoose"] = "success";
-    }
-    else {
-        state["ENVIRONMENT_Mongoose"] = "repair";
-    }
-
-    // console.log("State ENVIRONMENT_Mongoose: ", state);
-};
-
-const ENVIRONMENT_RepairMongoose = (state) => {
-    require("dotenv").config({
-        path: ".env"
-    });
-
-    if (process.env["MONGODB_URI_PREFIX_MONGODB"] && process.env["MONGODB_URI_SUFFIX_MONGODB"]) {
-        state["MONGODB_URI"] = process.env["MONGODB_URI_PREFIX_MONGODB"] + "/" + process.env["MONGODB_URI_SUFFIX_MONGODB"];
-        state["ENVIRONMENT_Mongoose"] = "repaired";
-    }
-    else {
-        state["ENVIRONMENT_Mongoose"] = "irreparable";
-    }
-    // console.log("State ENVIRONMENT_RepairMongoose: ", state);
-};
-
-const DATABASE_Connect = async (state) => {
+const UTILITY_ReadPEMs = () => {
+    let key;
+    let cert;
 
     try {
-        const mongoose_connect = await mongoose.connect(state["MONGODB_URI"]);
-        state["DATABASE_Connect"] = "success";
+        key = require("fs").readFileSync("/home/nq/licenta/bioinfo_blog/server0_website_service/cert/key.pem");
+        // state["READ_RSA_KEY_FILE"] = "succeeded";
+        // console.log("RSA KEY: ", key);
     }
     catch (error) {
         console.log(error);
-        state["DATABASE_Connect"] = "repair";
-    };
-
-    // console.log("State DATABASE_Connect: ", state);
-};
-
-const DATABASE_RepairConnect = (state) => {
-
-    state["DATABASE_Connect"] = "irreparable";
-    state["DATABASE_Connect"] = "repaired";
-
-    // console.log("State DATABASE_RepairConnect: ", state);
-};
-
-// ----
-
-const ENVIRONMENT_HttpServer = (state) => {
-
-    if (config.port && require("express") && require("body-parser") && require("body-parser").json()) {
-        state.HttpPort = config.port;
-        state.app = express();
-        state["ENVIRONMENT_HttpServer"] = "success";
-    }
-    else {
-        state["ENVIRONMENT_HttpServer"] = "repair";
+        // state["READ_RSA_KEY_FILE"] = "failed";
+        UTILITY_RepairReadPEMs();   // <TODO> this needs to be a pipeline; if a repair is triggered, it restarts the whole pipeline; more advanced: the pipeline
+                                    // repair mechanisms could jump to certain milestones in the pipeline, given that the effect of the repair does not propagate
+                                    // "further back than the milestone"
     }
 
-    // console.log("State ENVIRONMENT_HttpServer: ", state);
+    try {
+        cert = require("fs").readFileSync("/home/nq/licenta/bioinfo_blog/server0_website_service/cert/cert.pem");
+        // state["READ_RSA_CERTIFICATE_FILE"] = "succeeded";
+        // console.log("RSA CERTIFICATE: ", cert);
+    }
+    catch (error) {
+        console.log(error);
+        // state["READ_RSA_CERTIFICATE_FILE"] = "failed";
+    }
+
+    return [key, cert];
 };
 
-const ENVIRONMENT_RepairHttpServer = (state) => {
+const UTILITY_RepairReadPEMs = () => {
+    // execute:
+    // openssl genrsa -out key.pem
+    // openssl req -new -key key.pem -out csr.pem
+    // openssl x509 -req -days 1 -in csr.pem -signkey key.pem -out cert.pem
+
+    //
+};
+
+const UTILITY_HttpConfigureRoutes = (state) => {
+
+    // import GET[], POST[], OPTIONS[], DELETE[], etc.
+    for (let index = 0; index < HttpApi.GET.length; index++) {
+        state.HttpApp.get(HttpApi.GET[index].route, HttpApi.GET[index].functions)
+    }
+
+    for (let index = 0; index < HttpApi.POST.length; index++) {
+        state.HttpApp.post(HttpApi.POST[index].route, HttpApi.POST[index].functions)
+    }
+
+    for (let index = 0; index < HttpApi.PUT.length; index++) {
+        state.HttpApp.put(HttpApi.PUT[index].route, HttpApi.PUT[index].functions)
+    }
+
+    for (let index = 0; index < HttpApi.DELETE.length; index++) {
+        state.HttpApp.delete(HttpApi.DELETE[index].route, HttpApi.DELETE[index].functions)
+    }
+
+    for (let index = 0; index < HttpApi.OPTIONS.length; index++) {
+        state.HttpApp.options(HttpApi.OPTIONS[index].route, HttpApi.OPTIONS[index].functions)
+    }
+
+};
+
+const UTILITY_HttpSslConfigureRoutes = (state) => {
+
+    // import GET[], POST[], OPTIONS[], DELETE[], etc.
+    for (let index = 0; index < HttpSslApi.GET.length; index++) {
+        state.HttpSslApp.get(HttpSslApi.GET[index].route, HttpSslApi.GET[index].functions)
+    }
+
+    for (let index = 0; index < HttpSslApi.POST.length; index++) {
+        state.HttpSslApp.post(HttpSslApi.POST[index].route, HttpSslApi.POST[index].functions)
+    }
+
+    for (let index = 0; index < HttpSslApi.PUT.length; index++) {
+        state.HttpSslApp.put(HttpSslApi.PUT[index].route, HttpSslApi.PUT[index].functions)
+    }
+
+    for (let index = 0; index < HttpSslApi.DELETE.length; index++) {
+        state.HttpSslApp.delete(HttpSslApi.DELETE[index].route, HttpSslApi.DELETE[index].functions)
+    }
+
+    for (let index = 0; index < HttpSslApi.OPTIONS.length; index++) {
+        state.HttpSslApp.options(HttpSslApi.OPTIONS[index].route, HttpSslApi.OPTIONS[index].functions)
+    }
+
+};
+
+// ---- ---- ---- Pipeline
+
+// ---- ENVIRONMENT phase
+const ENVIRONMENT_DefineAllSymbols = (state) => {
     require("dotenv").config({
         path: ".env"
     });
@@ -271,133 +180,272 @@ const ENVIRONMENT_RepairHttpServer = (state) => {
         path: "src/.env"
     });
 
-    state["ENVIRONMENT_HttpServer"] = "repaired";
-    // console.log("State ENVIRONMENT_RepairHttpServer: ", state);
+    if(
+        process.env["HTTP_SERVER_PORT"] &&
+        process.env["HTTP_SSL_SERVER_PORT"] &&
+
+        process.env["MONGODB_URI_PREFIX_MONGODB"] &&
+        process.env["MONGODB_URI_SUFFIX_MONGODB"] &&
+
+        process.env["ABSOLUTE_PATH__STEMS_ARRAY__PROJECT_DIRECTORY"] &&
+        process.env["RELATIVE_PATH__FILES_DIRECTORY"] &&
+        process.env["RELATIVE_PATH__SERVER_DIRECTORY"] &&
+        process.env["RELATIVE_PATH__SSL_DIRECTORY"] &&
+        process.env["RELATIVE_PATH__FAVICON_FILE"] &&
+
+        process.env["RELATIVE_PATH__SERVER__NONSECUREHTML_DIRECTORY"] &&
+        process.env["RELATIVE_PATH__SERVER__SECUREHTML_DIRECTORY"] &&
+
+        process.env["RELATIVE_PATH__SSL__KEY_FILE"] &&
+        process.env["RELATIVE_PATH__SSL__CERTIFICATE_FILE"]
+
+) {
+        // ---- ---- ---- Ports
+
+        try {
+            state["HttpPort"] = Number.parseInt(process.env["HTTP_SERVER_PORT"]);
+            state["HttpSslPort"] = Number.parseInt(process.env["HTTP_SSL_SERVER_PORT"]);
+        }
+        catch (error) {
+            console.log(error);
+
+            state["HttpPort"] = 2120;   // <TODO> crash or use source hard-coded defaults ?
+            state["HttpSslPort"] = 3440;
+        }
+        // ---- ---- ---- [MONGODB] URIs
+
+        state["MongoDBUri"] = process.env["MONGODB_URI_PREFIX_MONGODB"] + "/" + process.env["MONGODB_URI_SUFFIX_MONGODB"];
+
+        // ---- ---- ---- Directories
+
+        state["AbsolutePath_ProjectDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["ABSOLUTE_PATH__STEMS_ARRAY__PROJECT_DIRECTORY"]));
+        state["RelativePath_FilesDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__FILES_DIRECTORY"]));
+        state["RelativePath_ServerDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__SERVER_DIRECTORY"]));
+        state["RelativePath_SslDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__SSL_DIRECTORY"]));
+
+        state["RelativePath_Server_NonSecureHtmlDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__SERVER__NONSECUREHTML_DIRECTORY"]));
+        state["RelativePath_Server_SecureHtmlDirectory"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__SERVER__SECUREHTML_DIRECTORY"]));
+
+        state["RelativePath_FaviconFile"] = UTILITY_StemsArrayToPath(UTILITY_StemsStringToStemsArray(process.env["RELATIVE_PATH__FAVICON_FILE"]));
+
+        // ---- "derived absolute paths"
+        state["AbsolutePath_NonSecureHtmlDirectory"] = require("path").join(
+            state["AbsolutePath_ProjectDirectory"],
+            state["RelativePath_ServerDirectory"],
+            state["RelativePath_Server_NonSecureHtmlDirectory"]);
+
+        state["AbsolutePath_SecureHtmlDirectory"] = require("path").join(
+            state["AbsolutePath_ProjectDirectory"],
+            state["RelativePath_ServerDirectory"],
+            state["RelativePath_Server_SecureHtmlDirectory"]);
+
+        state["AbsolutePath_FaviconFile"] = require("path").join(
+            state["AbsolutePath_ProjectDirectory"],
+            state["RelativePath_FaviconFile"]);
+
+        // ----
+
+        state["ENVIRONMENT_DefineAllSymbols"] = "succeeded";
+    }
+    else {
+        state["ENVIRONMENT_DefineAllSymbols"] = "failed";
+    }
 };
 
-const HTTPSERVER_ExpressConfiguration = (state) => {
+const ENVIRONMENT_RepairDefineAllSymbols = (state) => {
+    require("dotenv").config({
+        path: ".env"
+    });
+    require("dotenv").config({
+        path: "src/.env"
+    });
 
-    // const requestsQueueManager = reqQueue({activeLimit: 4, queuedLimit: 10});
-    // requestsQueueManager.rejectHandler = (req, res) => {
-    //         console.log(`Rejecting request, limit reached ${requestsQueueManager.queue.length}`);
-    //         res.status(500);
-    //         res.send();
-    // };
+    state["ENVIRONMENT_DefineAllSymbols"] = "repaired";    // <TODO> actual repair; maybe use source-coded defaults
 
-    state.app.disable('x-powered-by');
-    // state.app.use(requestsQueueManager); // <TODO> doesn't really solve any problem
-    state.app.use(require("body-parser").raw());
-    state.app.use(require("body-parser").json());
-//    state.app.use(express.urlencoded({extended: true}));  // when do you use this ? for query parameters ?
-    state.app.use(require("cookie-parser")());  // this I might do myself though ? it's just a string -> array (I won't use punctuation for values, to keep it simple)
-    state.app.use(express.static("public"));
-
-    state["HTTPSERVER_ExpressConfiguration"] = "success";
-    // console.log("State HTTPSERVER_ExpressConfiguration: ", state);
+    state["ENVIRONMENT_DefineAllSymbols"] = "irreparable";
 };
 
-const HTTPSERVER_RepairExpressConfiguration = (state) => {
-    state["HTTPSERVER_ExpressConfiguration"] = "repaired";
+// ---- CONFIGURE phase
 
-    // console.log("State HTTPSERVER_RepairExpressConfiguration: ", state);
-};
+const CONFIGURE_HttpApp = (state) => { // <TODO> configure an actual Http server, and the Express app (as just a handler)
 
-const HTTPSERVER_ConfigureRoutes = (state) => {
+    if ( require("http") && require("express") && require("body-parser") && require("body-parser").raw() && require("body-parser").json() && require("body-parser").urlencoded({extended: true}) ) {
 
-    // import GET[], POST[], OPTIONS[], DELETE[], etc.
-    for (let index = 0; index < REST_API.GET.length; index++) {
-        state.app.get(REST_API.GET[index].route, REST_API.GET[index].functions)
+        state.HttpApp = require("express")();
+
+        // <TODO> .use()
+        // <TODO> .routes: for loops
+        // <TODO> bind the server with the Express app
+
+        state.HttpApp.disable('x-powered-by');
+        state.HttpApp.use(require("body-parser").raw());
+        state.HttpApp.use(require("body-parser").json());
+        state.HttpApp.use(require("body-parser").urlencoded({extended: true}));
+        state.HttpApp.use(require("cookie-parser")());
+
+        UTILITY_HttpConfigureRoutes(state);
+
+        state["CONFIGURE_HttpApp"] = "succeeded";
+    }
+    else {
+        state["CONFIGURE_HttpApp"] = "failed";
     }
 
-    for (let index = 0; index < REST_API.POST.length; index++) {
-        state.app.post(REST_API.POST[index].route, REST_API.POST[index].functions)
+};
+
+const CONFIGURE_RepairHttpApp = (state) => {
+
+    if ( require("http") && require("express") && require("body-parser") && require("body-parser").raw() && require("body-parser").json() && require("body-parser").urlencoded({extended: true}) ) {
+        state.HttpSslPort = 3440;   // <TODO> source hard-coded repair ? by doing what ? installing the npm packages ?
+
+        state["CONFIGURE_HttpApp"] = "repaired";
     }
-
-    for (let index = 0; index < REST_API.PUT.length; index++) {
-        state.app.put(REST_API.PUT[index].route, REST_API.PUT[index].functions)
+    else {
+        state["CONFIGURE_HttpApp"] = "irreparable";
     }
+};
 
-    for (let index = 0; index < REST_API.DELETE.length; index++) {
-        state.app.delete(REST_API.DELETE[index].route, REST_API.DELETE[index].functions)
+const CONFIGURE_HttpSslApp = (state) => {
+
+    if ( require("https") && require("express") && require("body-parser") && require("body-parser").raw() && require("body-parser").json() && require("body-parser").urlencoded({extended: true}) ) {
+
+        state.HttpSslApp = require("express")();
+
+        // <TODO> .use()
+        // <TODO> .routes: for loops
+        // <TODO> bind the server with the Express app
+
+        state.HttpSslApp.disable('x-powered-by');
+        state.HttpSslApp.use(require("body-parser").raw());
+        state.HttpSslApp.use(require("body-parser").json());
+        state.HttpSslApp.use(require("body-parser").urlencoded({extended: true}));
+        state.HttpSslApp.use(require("cookie-parser")());
+
+        UTILITY_HttpSslConfigureRoutes(state);
+
+        state["CONFIGURE_HttpSslApp"] = "succeeded";
     }
-
-    for (let index = 0; index < REST_API.OPTIONS.length; index++) {
-        state.app.options(REST_API.OPTIONS[index].route, REST_API.OPTIONS[index].functions)
+    else {
+        state["CONFIGURE_HttpSslApp"] = "repaired";
     }
-
-    state["HTTPSERVER_ConfigureRoutes"] = "success";
-
-    // console.log("State HTTPSERVER_ConfigureRoutes: ", state);
 
 };
 
-const HTTPSERVER_RepairConfigureRoutes = (state) => {
+const CONFIGURE_RepairHttpSslApp = (state) => {
 
-    state["HTTPSERVER_ConfigureRoutes"] = "repaired";
+    if ( require("https") && require("express") && require("body-parser") && require("body-parser").raw() && require("body-parser").json() && require("body-parser").urlencoded({extended: true}) ) {
+        state.HttpSslPort = 3440;   // <TODO> source hard-coded repair ? by doing what ? installing the npm packages ?
 
-    // console.log("State HTTPSERVER_RepairConfigureRoutes: ", state);
+        state["CONFIGURE_HttpSslApp"] = "repaired";
+    }
+    else {
+        state["CONFIGURE_HttpSslApp"] = "irreparable";
+    }
+
 };
 
-const HTTPSERVER_Listen = (state) => {
+// ---- DATABASE phase
 
-    state.app.listen(state.HttpPort);
+const DATABASE_ConnectMongoDB = async (state) => {
 
-    state["HTTPSERVER_Listen"] = "success";
+    try {
+        const mongoose_connection = await require("mongoose").connect(state["MongoDBUri"]);
 
-    // console.log("State HTTPSERVER_Listen: ", state);
-    console.log(`Listening on port ${state.HttpPort}`);
+        state["DATABASE_ConnectMongoDB"] = "succeeded";
+    }
+    catch (error) {
+        console.log(error);
+        state["DATABASE_ConnectMongoDB"] = "failed";
+    }
+
 };
 
-const HTTPSERVER_RepairListen = (state) => {
+const DATABASE_RepairConnectMongoDB = (state) => {
 
-    state["HTTPSERVER_Listen"] = "repaired";
+    state["DATABASE_ConnectMongoDB"] = "repaired";
 
-    // console.log("State HTTPSERVER_RepairListen: ", state);
+    state["DATABASE_ConnectMongoDB"] = "irreparable";
 };
 
-// ----
+// ---- SERVER phase
+
+const SERVER_HttpServer = (state) => {
+
+    state.HttpServer = require("http").createServer(state.HttpApp);
+    state.HttpServer.listen(state.HttpPort, () => { console.log(`Listening http:// on port ${state.HttpPort}`); });
+
+    state["SERVER_HttpServer"] = "succeeded";
+
+};
+
+const SERVER_RepairHttpServer = (state) => {
+
+    state["SERVER_HttpServer"] = "repaired";
+
+    state["SERVER_HttpServer"] = "irreparable";
+};
+
+const SERVER_HttpSslServer = (state) => {
+
+    const [key, certificate] = UTILITY_ReadPEMs();
+
+    state.HttpSslServer = require("https").createServer({
+        key: key,
+        cert: certificate
+    }, state.HttpSslApp);
+
+    state.HttpSslServer.listen(state.HttpSslPort, () => { console.log(`Listening https:// on port ${state.HttpSslPort}`); });
+
+
+    state["SERVER_HttpSslServer"] = "failed";
+    state["SERVER_HttpSslServer"] = "succeeded";
+
+};
+
+const SERVER_RepairHttpSslServer = (state) => {
+
+    state["SERVER_HttpSslServer"] = "repaired";
+
+    state["SERVER_HttpSslServer"] = "irreparable";
+};
+
+// ---- ---- ---- Pipeline definition
 
 const initialization_pipeline = [
     {
-        name: "ENVIRONMENT_Directories",
-        do: ENVIRONMENT_Directories,
-        repair: ENVIRONMENT_RepairDirectories,
+        name: "ENVIRONMENT_DefineAllSymbols",
+        do: ENVIRONMENT_DefineAllSymbols,
+        repair: ENVIRONMENT_RepairDefineAllSymbols,
     },
     {
-        name: "ENVIRONMENT_Mongoose",
-        do: ENVIRONMENT_Mongoose,
-        repair: ENVIRONMENT_RepairMongoose,
+        name: "CONFIGURE_HttpApp",
+        do: CONFIGURE_HttpApp,
+        repair: CONFIGURE_RepairHttpApp,
     },
     {
-        name: "DATABASE_Connect",
-        do: DATABASE_Connect,
-        repair: DATABASE_RepairConnect
+        name: "CONFIGURE_HttpSslApp",
+        do: CONFIGURE_HttpSslApp,
+        repair: CONFIGURE_RepairHttpSslApp,
+    },
+
+    {
+        name: "DATABASE_ConnectMongoDB",
+        do: DATABASE_ConnectMongoDB,
+        repair: DATABASE_RepairConnectMongoDB,
     },
     {
-        name: "DATABASE_InitializeCollections",
-        do: DATABASE_InitializeCollections,
-        repair: DATABASE_RepairInitializeCollections
+        name: "SERVER_HttpServer",
+        do: SERVER_HttpServer,
+        repair: SERVER_RepairHttpServer,
     },
     {
-        name: "ENVIRONMENT_HttpServer",
-        do: ENVIRONMENT_HttpServer,
-        repair: ENVIRONMENT_RepairHttpServer
+        name: "SERVER_HttpSslServer",
+        do: SERVER_HttpSslServer,
+        repair: SERVER_RepairHttpSslServer,
     },
-    {
-        name: "HTTPSERVER_ExpressConfiguration",
-        do: HTTPSERVER_ExpressConfiguration,
-        repair: HTTPSERVER_RepairExpressConfiguration
-    },
-    {
-        name: "HTTPSERVER_ConfigureRoutes",
-        do: HTTPSERVER_ConfigureRoutes,
-        repair: HTTPSERVER_RepairConfigureRoutes
-    },
-    {
-        name: "HTTPSERVER_Listen",
-        do: HTTPSERVER_Listen,
-        repair: HTTPSERVER_RepairListen
-    },
+
+
+
 
 ];
 
@@ -406,7 +454,7 @@ const initialization_pipeline = [
 const ExecutePipeline = async (state) => {
 
     for (let index = 0; index < initialization_pipeline.length; index++) {
-        state[initialization_pipeline[index].name] = "pending";    // ->(repair -> (irreparable, repaired), success -> ...next...)
+        state[initialization_pipeline[index].name] = "pending";    // ->(repair -> (irreparable, repaired), succeeded -> ...next...)
         // console.log(`index ${index} is 'pending'`);
 
         // console.log(initialization_pipeline[index].do, typeof initialization_pipeline[index].do);
@@ -418,19 +466,19 @@ const ExecutePipeline = async (state) => {
         }
 // ----
 
-        // console.log("Checking for success: ", state[initialization_pipeline[index].name] === "success");
-        // console.log("Checking for repair: ", state[initialization_pipeline[index].name] === "repair");
+        // console.log("Checking for succeeded: ", state[initialization_pipeline[index].name] === "succeeded");
+        // console.log("Checking for repair: ", state[initialization_pipeline[index].name] === "repaired");
 
-        if(state[initialization_pipeline[index].name] === "success") {
-            // console.log(`index ${index} is 'success'`);
+        if(state[initialization_pipeline[index].name] === "succeeded") {
+            // console.log(`index ${index} is 'succeeded'`);
             ;
         }
-        else if (state[initialization_pipeline[index].name] === "repair") {
+        else if (state[initialization_pipeline[index].name] === "failed") {
             // console.log(`index ${index} is 'repair'`);
             initialization_pipeline[index].repair(state);
 
             if (state[initialization_pipeline[index].name] === "irreparable") {
-                // console.log(`index ${index} is 'irreparable'`);
+                console.log(`The pipeline encountered an irreparable error in function ${initialization_pipeline[index].name}`);
                 break;
             }
             else if (state[initialization_pipeline[index].name] === "repaired") {
@@ -442,7 +490,7 @@ const ExecutePipeline = async (state) => {
             }
         }
         else {
-            // console.log("Undefined state");
+            console.log("Undefined state");
             break;
         }
     }

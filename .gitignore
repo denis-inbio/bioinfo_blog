@@ -1,3 +1,5 @@
+/.idea
+
 /shared
 
 /local0_manage_books/node_modules
@@ -5,6 +7,7 @@
 /local1_crawl_PDB/node_modules
 
 /server0_website_service/node_modules
+/server0_website_service/cert
 /server0_website_service/src/.env
 /server0_website_service/v0
 /server0_website_service/v1

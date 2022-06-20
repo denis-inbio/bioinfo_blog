@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script id="mobile-redirection">
+        if( !/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            window.location.replace('/en/register');
+        }
+
+        document.head.removeChild(document.getElementById("mobile-redirection"));
+    </script>
+
+</head>
+<body>
+
+    If you are going to register, then what is needed ? well,...<br/>
+        identification<br/>
+        secure credentials exchange: offer to download a token or large-entropy credential file, or otherwise<br/>
+
+    <div id="page" style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: row;">
+            <input id="pseudonym" type="text" placeholder="pseudonym">
+            <p id="pseudonym-message">pseudonym is not available</p>
+        </div>
+
+        <div style="display: flex; flex-direction: row;">
+            <input id="email" type="email" placeholder="email">
+            <input id="email-confirmation" type="email" placeholder="repeat the email">
+            <p id="email-message">Email can't be empty</p>
+        </div>
+
+        <div style="display: flex; flex-direction: row;">
+            <input id="password" type="password" placeholder="password">
+            <input id="password-confirmation" type="password" placeholder="repeat the password">
+            <p id="password-message">Password can't be empty; Passwords do not match</p>
+        </div>
+
+        <button id="register-button">Register</button>
+
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <p id="credential-secret-text" style="font-size: 10px; font-family: 'Roboto Light',serif; width:70vw; height: 100px; overflow: scroll;"></p>
+            <a id="credential-secret-anchor" href="" download="credential-secret.bin" style="pointer-events: none;">
+                <button id="credential-secret-button">Download</button>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        const INITIALIZE_RegisterButton = () => {
+            const register_button_element = document.getElementById("register-button");
+            register_button_element.onclick = (event) => {  // <TODO> initially query about the pseudonym's availability, upon confirmation send the whole data (?); or email's availability ?
+                const pseudonym_element = document.getElementById("pseudonym");
+                const email_element = document.getElementById("email");
+                const password_element = document.getElementById("password");
+
+                if (pseudonym_element && email_element && password_element) {
+
+                    const pseudonym = pseudonym_element.value;
+                    const email = email_element.value;
+                    const password = password_element.value;
+
+                    const body = {
+                        pseudonym: pseudonym,
+                        email: email,
+                        password: password,    // this will have to be hashed client-side at some point
+                    };
+
+                    fetch("/en/register", {
+                        method: "POST",
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(body)
+                    })
+                        .then(
+                            async (success) => {
+                                // <TODO> Offer to show (for copy-paste) or to download the credential_secret; at the moment, this is intended as a one-time exchange of a secret
+                                // You have 1 minute to copy this string before it will be deleted from memory; won't use cookies, because it would have to be HttpOnly-Secure
+
+                                const success_json = await success.json();
+                                console.log("Response: ", success_json);
+                                setTimeout(DELETE_CredentialSecret, 3000);
+
+                                const anchor_element = document.getElementById("credential-secret-anchor");
+                                anchor_element.href = URL.createObjectURL(new Blob([new Uint8Array(success_json.credential_secret.data)]));
+                                anchor_element.style.pointerEvents = "";
+
+                                const text_element = document.getElementById("credential-secret-text");
+                                let text_form = "";
+                                for (let index = 0; index < success_json.credential_secret.data.length; index++) {
+                                    text_form += success_json.credential_secret.data[index].toString();
+                                    if (index !== success_json.credential_secret.data.length - 1) {
+                                        text_form += ' ';
+                                    }
+                                }
+                                text_element.innerHTML = text_form;
+                            },
+                            (failure) => {
+                                console.log(failure);
+                            }
+                        )
+                }
+            };
+        }
+
+        const DELETE_CredentialSecret = () => {
+            console.log("Deleting credential secret");
+            const anchor_element = document.getElementById("credential-secret-anchor");
+            anchor_element.href = "";
+            anchor_element.style.pointerEvents = "none";
+        };
+
+        INITIALIZE_RegisterButton();
+    </script>
+
+
+
+</body>
+</html>

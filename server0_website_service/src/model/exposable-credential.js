@@ -5,7 +5,7 @@ const schema = new mongoose.Schema({    // <TODO> "micro-authorization" (!)
         type: String,
         required: true
     },
-    entropy: {
+    credential: {
         type: Buffer,
         required: true
     },
@@ -58,5 +58,13 @@ const schema = new mongoose.Schema({    // <TODO> "micro-authorization" (!)
     id: true
 });
 const ExposableCredential = mongoose.model("exposableCredential", schema);
+
+const VALIDATE_REPAIR_ParametrizedExposableCredential = () => {
+
+};
+
+const VALIDATE_REPAIR_DefaultExposableCredential = () => {  // <TODO> decide on a default exposable credential
+
+};
 
 module.exports = { ExposableCredential };

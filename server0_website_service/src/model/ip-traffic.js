@@ -16,4 +16,11 @@ const schema = new mongoose.Schema({
 });
 const IPTraffic = mongoose.model("ipTraffic", schema);
 
-module.exports = { IPTraffic };
+const VALIDATE_REPAIR_IpTraffic = (ipTraffic) => {
+    if( ipTraffic["visits"] ) {}
+    else { ipTraffic["visits"] = 0; }
+
+    return ipTraffic;
+};
+
+module.exports = { IPTraffic, VALIDATE_REPAIR_IpTraffic };

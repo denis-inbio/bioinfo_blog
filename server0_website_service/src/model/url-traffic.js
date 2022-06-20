@@ -5,6 +5,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: true
     },
+    protocol: {
+        type: String,
+        required: false // <TODO> has to be changed to true in the next revision
+    },
     GET: {
         type: Number,
         required: false
@@ -32,7 +36,12 @@ const schema = new mongoose.Schema({
 });
 const UrlTraffic = mongoose.model("urlTraffic", schema);
 
-const VALIDATE_REPAIR_UrlTraffic = (urlTraffic) => {
+const VALIDATE_REPAIR_HttpUrlTraffic = (urlTraffic) => {
+    urlTraffic["protocol"] = "http";
+
+    if( urlTraffic["GET"] ) {}
+    else { urlTraffic["GET"] = 0; }
+
     if( urlTraffic["GET"] ) {}
     else { urlTraffic["GET"] = 0; }
 
@@ -51,4 +60,52 @@ const VALIDATE_REPAIR_UrlTraffic = (urlTraffic) => {
     return urlTraffic;
 };
 
-module.exports = { UrlTraffic, VALIDATE_REPAIR_UrlTraffic };
+const VALIDATE_REPAIR_HttpSslUrlTraffic = (urlTraffic) => {
+    urlTraffic["protocol"] = "https";
+
+    if( urlTraffic["GET"] ) {}
+    else { urlTraffic["GET"] = 0; }
+
+    if( urlTraffic["GET"] ) {}
+    else { urlTraffic["GET"] = 0; }
+
+    if( urlTraffic["POST"] ) {}
+    else { urlTraffic["POST"] = 0; }
+
+    if( urlTraffic["PUT"] ) {}
+    else { urlTraffic["PUT"] = 0; }
+
+    if( urlTraffic["DELETE"] ) {}
+    else { urlTraffic["DELETE"] = 0; }
+
+    if( urlTraffic["OPTIONS"] ) {}
+    else { urlTraffic["OPTIONS"] = 0; }
+
+    return urlTraffic;
+};
+
+const VALIDATE_REPAIR_WebsocketUrlTraffic = (urlTraffic) => {
+    urlTraffic["protocol"] = "websocket";
+
+    if( urlTraffic["GET"] ) {}
+    else { urlTraffic["GET"] = 0; }
+
+    if( urlTraffic["GET"] ) {}
+    else { urlTraffic["GET"] = 0; }
+
+    if( urlTraffic["POST"] ) {}
+    else { urlTraffic["POST"] = 0; }
+
+    if( urlTraffic["PUT"] ) {}
+    else { urlTraffic["PUT"] = 0; }
+
+    if( urlTraffic["DELETE"] ) {}
+    else { urlTraffic["DELETE"] = 0; }
+
+    if( urlTraffic["OPTIONS"] ) {}
+    else { urlTraffic["OPTIONS"] = 0; }
+
+    return urlTraffic;
+};
+
+module.exports = { UrlTraffic, VALIDATE_REPAIR_HttpUrlTraffic, VALIDATE_REPAIR_HttpSslUrlTraffic, VALIDATE_REPAIR_WebsocketUrlTraffic };

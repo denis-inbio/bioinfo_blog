@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script id="mobile-redirection">
+        if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            window.location.replace('/mobile/en/private-space');
+        }
+
+        document.head.removeChild(document.getElementById("mobile-redirection"));
+    </script>
+
+</head>
+<body>
+    The server will read the:
+        cookie: [`session_id_${session_index}`]
+    If the session is expired, then offer a redirection message and no private content, or
+        maybe allow using an ownership-credential or consuming an exposable-credential on the same page
+    The URL query parameter will allow the user id / "session_index" to remain the same throughout
+
+
+</body>
+</html>
